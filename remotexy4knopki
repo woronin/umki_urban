@@ -1,0 +1,134 @@
+//////////////////////////////////////////////
+//     2017.12.18 woronin,  umkiedu@gmail.com     
+//     Robot UMKI controller K6_2_mini
+//     To connect using RemoteXY mobile app by link http://remotexy.com/en/download/                    
+//     - for ANDROID 4.0.1 or later version; 
+//////////////////////////////////////////////    
+ 
+// setup connect bluetooth module HC-06 
+#define REMOTEXY_SERIAL_RX 10 
+#define REMOTEXY_SERIAL_TX 11
+#define REMOTEXY_SERIAL_SPEED 9600 
+
+int m1speed=3, k=0, s=0; // скорость левый
+int m2speed=5; // скорость правый
+int m1direction=2; // правый
+int m2direction=4; // левый
+
+int side, pwm=255;
+
+void goForward(int pwm)
+{
+digitalWrite(m1direction,LOW); // вперед
+digitalWrite(m2direction,LOW); // вперед
+
+digitalWrite(m1speed, HIGH); // скорость
+digitalWrite(m2speed, HIGH);
+}
+
+void goBack(int pwm)
+{
+digitalWrite(m1direction,HIGH); // вперед
+digitalWrite(m2direction,HIGH); // вперед
+analogWrite(m1speed, pwm); // скорость
+analogWrite(m2speed, pwm);
+}
+
+void rotateRight(int pwm)
+{
+digitalWrite(m1direction,HIGH); // вперед правый
+digitalWrite(m2direction,LOW); // назад левый
+analogWrite(m1speed, pwm); // скорость
+analogWrite(m2speed, pwm);
+}
+
+void rotateLeft(int pwm)
+{
+digitalWrite(m1direction,LOW); // вперед правый
+digitalWrite(m2direction,HIGH); // назад левый
+analogWrite(m1speed, pwm); // скорость
+analogWrite(m2speed, pwm);
+}
+////////////////////////////////////////////// 
+//        RemoteXY include library          // 
+////////////////////////////////////////////// 
+
+// определение режима соединения и подключение библиотеки RemoteXY  
+#define REMOTEXY_MODE__SOFTSERIAL
+#include <SoftwareSerial.h> 
+
+#include <RemoteXY.h> 
+
+
+// конфигурация интерфейса   
+#pragma pack(push, 1) 
+uint8_t RemoteXY_CONF[] = 
+  { 255,4,0,0,0,47,0,6,5,0,
+  1,1,24,14,10,10,2,226,150,178,
+  0,1,1,14,24,10,10,2,226,151,
+  132,0,1,1,24,34,10,10,2,226,
+  150,188,0,1,1,34,24,10,10,2,
+  226,150,186,0 }; 
+   
+// структура определяет все переменные вашего интерфейса управления  
+struct { 
+
+    // input variable
+  uint8_t bup; // =1 если кнопка нажата, иначе =0 
+  uint8_t bleft; // =1 если кнопка нажата, иначе =0 
+  uint8_t bback; // =1 если кнопка нажата, иначе =0 
+  uint8_t bright; // =1 если кнопка нажата, иначе =0 
+
+    // other variable
+  uint8_t connect_flag;  // =1 if wire connected, else =0 
+
+} RemoteXY; 
+#pragma pack(pop) 
+
+///////////////////////////////////////////// 
+//           END RemoteXY include          // 
+///////////////////////////////////////////// 
+
+
+
+void setup()  
+{ 
+  RemoteXY_Init ();  
+   
+     pinMode(m1direction, OUTPUT);
+  pinMode(m2direction, OUTPUT);
+  // TODO you setup code 
+   
+} 
+
+void loop()  
+{  
+  RemoteXY_Handler (); 
+
+  if (RemoteXY.bup)
+  {
+    goForward(pwm);
+  }
+  else if (RemoteXY.bback)
+  {
+    goBack(pwm);
+  }
+    else if (RemoteXY.bright)
+  {
+    rotateRight(pwm);
+  }
+    else if (RemoteXY.bleft)
+  {
+    rotateLeft(pwm);
+  }
+  else 
+  {
+      analogWrite(m1speed, 0); // скорость
+      analogWrite(m2speed, 0);
+  }
+   
+  // TODO you loop code 
+  // используйте структуру RemoteXY для передачи данных 
+
+
+}
