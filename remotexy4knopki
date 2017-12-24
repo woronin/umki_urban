@@ -5,9 +5,9 @@
 //     - for ANDROID 4.0.1 or later version; 
 //////////////////////////////////////////////    
  
-// setup connect bluetooth module HC-06 
-#define REMOTEXY_SERIAL_RX 10 
-#define REMOTEXY_SERIAL_TX 11
+// setup connect bluetooth module HC-05 
+#define REMOTEXY_SERIAL_RX 6
+#define REMOTEXY_SERIAL_TX 7
 #define REMOTEXY_SERIAL_SPEED 9600 
 
 int m1speed=3, k=0, s=0; // скорость левый
